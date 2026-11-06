@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#080d1c">
+<title>NS AI VIDEO STUDIO</title>
+<style>
+:root{--bg:#080d1c;--panel:#111a30;--panel2:#172442;--blue:#54b8ff;--purple:#9c78ff;--text:#eef4ff;--muted:#9aabc7;--line:#263654}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 80% 0%,#1b2450 0,transparent 38%),var(--bg);color:var(--text);font:15px system-ui,-apple-system,Segoe UI,sans-serif}
+header{padding:22px 18px 14px;position:sticky;top:0;background:#080d1ceF;backdrop-filter:blur(14px);z-index:3;border-bottom:1px solid var(--line)}
+.brand{font-weight:900;letter-spacing:1.5px;font-size:20px}.brand span{color:var(--blue)}.sub{color:var(--muted);font-size:11px;letter-spacing:2px;margin-top:4px}
+main{max-width:720px;margin:auto;padding:18px 14px 40px}.hero{background:linear-gradient(130deg,#142b4b,#282052);border:1px solid #38517a;border-radius:20px;padding:19px;margin-bottom:16px;box-shadow:0 15px 40px #0005}
+h1{font-size:25px;line-height:1.1;margin:0 0 9px}.hero p{color:#c4d5ef;margin:0;font-size:13px;line-height:1.5}.pill{display:inline-block;margin-top:13px;border:1px solid #367f91;background:#0b3c48;color:#9ef2e6;border-radius:30px;padding:5px 10px;font-size:11px;font-weight:700}
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:16px 0}.tab{border:1px solid var(--line);background:var(--panel);color:var(--muted);padding:11px 6px;border-radius:12px;font-weight:700;font-size:12px}.tab.active{color:white;border-color:var(--blue);background:#17304c}
+.card{background:linear-gradient(180deg,#121d34,#0f172a);border:1px solid var(--line);border-radius:18px;padding:16px;margin:12px 0}.card h2{font-size:16px;margin:0 0 12px}.muted{color:var(--muted);font-size:12px;line-height:1.5}
+.upload{display:block;border:1.5px dashed #49658e;border-radius:14px;padding:19px;text-align:center;background:#0b1427;cursor:pointer}.upload strong{display:block;margin:7px 0}.upload input{display:none}
+.preview{width:100%;aspect-ratio:16/9;background:#050914;border-radius:13px;overflow:hidden;display:grid;place-items:center;border:1px solid #263957;margin-top:12px}.preview canvas{width:100%;height:100%;object-fit:contain}.placeholder{color:#6f83a8;text-align:center;padding:20px;font-size:13px}
+label{display:block;color:#c9d8ef;font-size:12px;margin:14px 0 6px}input[type=text],textarea,select{width:100%;border:1px solid #314361;background:#0a1325;color:white;border-radius:11px;padding:12px;font:inherit}textarea{min-height:78px;resize:vertical}
+input[type=range]{width:100%;accent-color:var(--blue)}.row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.btn{width:100%;border:0;border-radius:12px;padding:13px 15px;font-weight:800;color:#06101f;background:linear-gradient(100deg,var(--blue),#a88aff);margin-top:12px;font-size:14px}.btn.secondary{background:#1a2944;color:#dceaff;border:1px solid #385074}.btn:disabled{opacity:.45}
+.status{font-size:12px;color:#a9c3e7;margin-top:10px;min-height:18px}.note{background:#211d36;border:1px solid #4a3d72;border-radius:12px;padding:12px;color:#d5caff;font-size:12px;line-height:1.5;margin-top:12px}
+.hidden{display:none!important}.footer{text-align:center;color:#7083a2;font-size:11px;padding:20px}
+</style>
+</head>
+<body>
+<header><div class="brand">NS <span>AI</span> VIDEO STUDIO</div><div class="sub">CREATE · ANIMATE · EXPORT</div></header>
+<main>
+<section class="hero"><h1>Bring your images to life.</h1><p>A lightweight mobile video studio designed for Android. Animate a photo with smooth camera motion and export a short video directly from your browser.</p><span class="pill">FREE LOCAL EDITING PROTOTYPE</span></section>
+<div class="tabs"><button class="tab active" data-tab="animate">Image Animator</button><button class="tab" data-tab="prompt">Prompt Studio</button><button class="tab" data-tab="about">About</button></div>
+<section id="animate">
+<div class="card">
+<h2>01 · Choose an image</h2>
+<label class="upload"><div style="font-size:28px">＋</div><strong>Tap to upload a photo</strong><span class="muted">JPG, PNG or WEBP · processed locally</span><input id="file" type="file" accept="image/*"></label>
+<div class="preview"><canvas id="canvas" width="1280" height="720"></canvas><div id="empty" class="placeholder">Your video preview will appear here</div></div>
+<label for="motion">Camera motion</label><select id="motion"><option value="zoom">Slow cinematic zoom</option><option value="pan">Slow horizontal pan</option><option value="float">Gentle floating motion</option></select>
+<div class="row"><label for="strength">Motion strength</label><span id="strengthVal" class="muted">35%</span></div><input id="strength" type="range" min="10" max="70" value="35">
+<label for="duration">Clip duration</label><select id="duration"><option value="5">5 seconds</option><option value="8" selected>8 seconds</option><option value="10">10 seconds</option></select>
+<label for="ratio">Canvas format</label><select id="ratio"><option value="16:9">16:9 Landscape</option><option value="9:16">9:16 TikTok / Reels</option><option value="1:1">1:1 Square</option></select>
+<button class="btn secondary" id="previewBtn" disabled>Preview animation</button>
+<button class="btn" id="exportBtn" disabled>Export video</button>
+<div id="status" class="status">Upload an image to begin.</div>
+<div class="note">This prototype creates motion effects locally. It does not run a generative AI video model. Export format depends on Android browser support (usually WebM).</div>
+</div>
+</section>
+<section id="prompt" class="hidden">
+<div class="card"><h2>02 · Prompt Studio</h2><p class="muted">Write a scene description and build a reusable prompt for an AI video model. This creates text only; it does not generate AI footage by itself.</p>
+<label for="subject">Main subject</label><input id="subject" type="text" placeholder="e.g. Kagura holding her Seimei umbrella">
+<label for="scene">Scene description</label><textarea id="scene" placeholder="Describe the setting, action, lighting and mood..."></textarea>
+<label for="style">Visual style</label><select id="style"><option>Cinematic anime fantasy</option><option>Ultra-realistic cinematic</option><option>3D game cinematic</option><option>Dreamlike fantasy</option></select>
+<label for="format">Aspect ratio</label><select id="format"><option>Vertical 9:16</option><option>Landscape 16:9</option><option>Square 1:1</option></select>
+<button class="btn" id="makePrompt">Build video prompt</button>
+<label for="output">Generated prompt</label><textarea id="output" readonly placeholder="Your prompt will appear here..."></textarea>
+<button class="btn secondary" id="copyPrompt">Copy prompt</button><div id="promptStatus" class="status"></div></div>
+</section>
+<section id="about" class="hidden">
+<div class="card"><h2>About this prototype</h2><p class="muted">NS AI VIDEO STUDIO is an early mobile-friendly prototype for the nubia Neo 3 5G. It uses browser-based canvas animation and local recording for basic image motion.</p><p class="muted">True text-to-video and image-to-video AI require a compatible model and substantial processing power. This prototype does not promise unlimited AI generation, native 4K generation, or MP4 export on every browser.</p><p class="muted">For best results, use a clear image, close other apps, keep the phone cool and allow enough free storage before exporting.</p></div>
+</section>
+<div class="footer">NS AI VIDEO STUDIO · Prototype 0.1 · Made for Android</div>
+</main>
+<script>
+const fileInput=document.getElementById('file'), canvas=document.getElementById('canvas'),ctx=canvas.getContext('2d'),empty=document.getElementById('empty');
+const previewBtn=document.getElementById('previewBtn'),exportBtn=document.getElementById('exportBtn'),statusEl=document.getElementById('status');
+let img=null, raf=0, start=0, recording=false, recorder=null, chunks=[];
+document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));['animate','prompt','about'].forEach(id=>document.getElementById(id).classList.toggle('hidden',id!==b.dataset.tab));}));
+document.getElementById('strength').addEventListener('input',e=>document.getElementById('strengthVal').textContent=e.target.value+'%');
+function setCanvas(){const ratio=document.getElementById('ratio').value;let w=1280,h=720;if(ratio==='9:16'){w=720;h=1280}else if(ratio==='1:1'){w=h=900}canvas.width=w;canvas.height=h;if(img)draw(0)}
+function draw(t){if(!img)return;const w=canvas.width,h=canvas.height,mode=document.getElementById('motion').value,s=Number(document.getElementById('strength').value)/100;
+ctx.fillStyle='#050914';ctx.fillRect(0,0,w,h);
+const scale=Math.max(w/img.width,h/img.height),baseW=img.width*scale,baseH=img.height*scale;
+const phase=t/8000,zoom=mode==='zoom'?1+phase*s*.35:1+Math.sin(phase*Math.PI*2)*s*.08;
+let dw=baseW*zoom,dh=baseH*zoom,dx=(w-dw)/2,dy=(h-dh)/2;
+if(mode==='pan')dx+=(Math.sin(phase*Math.PI*2)*s*.35)*(w-dw);
+if(mode==='float'){dx+=Math.sin(phase*Math.PI*2)*s*18;dy+=Math.cos(phase*Math.PI*2)*s*18}
+ctx.drawImage(img,dx,dy,dw,dh);
+const g=ctx.createLinearGradient(0,0,w,h);g.addColorStop(0,'rgba(18,38,75,.08)');g.addColorStop(1,'rgba(5,7,24,.24)');ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
+}
+function loop(now){if(!start)start=now;draw(now-start);raf=requestAnimationFrame(loop)}
+fileInput.addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;if(!f.type.startsWith('image/')){statusEl.textContent='Please choose an image file.';return}const url=URL.createObjectURL(f);const im=new Image();im.onload=()=>{img=im;empty.classList.add('hidden');setCanvas();previewBtn.disabled=false;exportBtn.disabled=false;statusEl.textContent='Image ready. Preview or export your animation.';URL.revokeObjectURL(url)};im.onerror=()=>statusEl.textContent='Could not load that image.';im.src=url;});
+document.getElementById('ratio').addEventListener('change',setCanvas);
+['motion','strength'].forEach(id=>document.getElementById(id).addEventListener('input',()=>{if(img&&!raf)draw(0)}));
+previewBtn.addEventListener('click',()=>{if(!img)return;cancelAnimationFrame(raf);raf=0;start=0;loop(performance.now());statusEl.textContent='Preview playing. Tap Preview again to refresh.';});
+function stopPreview(){cancelAnimationFrame(raf);raf=0;start=0}
+exportBtn.addEventListener('click',async()=>{
+ if(!img||recording)return;
+ if(!canvas.captureStream||!window.MediaRecorder){statusEl.textContent='Video recording is not supported by this browser. Try a recent Chrome version.';return}
+ stopPreview();const seconds=Number(document.getElementById('duration').value);
+ const stream=canvas.captureStream(30);let mime='video/webm;codecs=vp9';if(!MediaRecorder.isTypeSupported(mime)){mime='video/webm;codecs=vp8';if(!MediaRecorder.isTypeSupported(mime))mime='video/webm'}
+ try{recorder=new MediaRecorder(stream,{mimeType:mime});chunks=[];recorder.ondataavailable=e=>{if(e.data.size)chunks.push(e.data)};recorder.onstop=()=>{const blob=new Blob(chunks,{type:recorder.mimeType||'video/webm'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='NS-AI-VIDEO-STUDIO.webm';a.click();setTimeout(()=>URL.revokeObjectURL(url),30000);recording=false;exportBtn.disabled=false;statusEl.textContent='Export complete. Check your Downloads folder.';stream.getTracks().forEach(t=>t.stop())};
+ recording=true;exportBtn.disabled=true;statusEl.textContent='Rendering video on your phone… keep this page open.';recorder.start();const begin=performance.now();function frame(now){const elapsed=now-begin;draw(elapsed);if(elapsed<seconds*1000&&recording)requestAnimationFrame(frame);else if(recording)recorder.stop()}requestAnimationFrame(frame);
+ }catch(err){recording=false;exportBtn.disabled=false;statusEl.textContent='Could not start export: '+err.message}
+});
+document.getElementById('makePrompt').addEventListener('click',()=>{const subject=document.getElementById('subject').value.trim()||'the main subject';const scene=document.getElementById('scene').value.trim()||'in a dramatic cinematic environment';const style=document.getElementById('style').value;const format=document.getElementById('format').value;document.getElementById('output').value=`Create a ${style} video in ${format}. Main subject: ${subject}. Scene: ${scene}. Use smooth natural motion, coherent anatomy and details, cinematic composition, controlled camera movement, detailed lighting, subtle atmospheric particles, stable character identity, and clean temporal consistency. Avoid flicker, warping, extra limbs, text artifacts, and sudden scene changes.`;document.getElementById('promptStatus').textContent='Prompt created.'});
+document.getElementById('copyPrompt').addEventListener('click',async()=>{const v=document.getElementById('output').value;if(!v){document.getElementById('promptStatus').textContent='Create a prompt first.';return}try{await navigator.clipboard.writeText(v);document.getElementById('promptStatus').textContent='Copied to clipboard.'}catch(e){document.getElementById('output').select();document.getElementById('promptStatus').textContent='Select and copy the prompt.'}});
+</script>
+</body>
+</html>
